@@ -1,6 +1,6 @@
 "use client";
 
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {DefaultMap, Locations} from "@/constants/locations";
 import {generateHighlightedMap} from "@/app/utils/generateHighlightedMap";
 import Image from "next/image";
@@ -11,6 +11,7 @@ export default function Home() {
     const [locationToLand, setLocationToLand] = useState<string>("");
     const [map, setMap] = useState<string>(DefaultMap);
     const [locations, setLocations] = useState<string[]>([]);
+    const mapImageRef = useRef<HTMLImageElement>(null); // Add a ref for the map image
 
     const randomizeLocation = () => {
         // let index
@@ -37,6 +38,10 @@ export default function Home() {
             // Add the new item at the beginning
             return [Locations[index], ...prevState];
         });
+
+        setTimeout(() => {
+            mapImageRef.current?.focus();
+        }, 100); // Allow time for the new map to generate
     };
 
     useEffect(() => {
@@ -186,7 +191,7 @@ export default function Home() {
                     )}
                 </div>
                 <div className=" bg-gray-300 rounded p-1 mb-5">
-                    <Image src={map} alt={"fortnite_map"} width={1024} height={576}/>
+                    <Image src={map} alt={"fortnite_map"} width={1024} height={576} ref={mapImageRef} tabIndex={-1}/>
                 </div>
             </main>
 
