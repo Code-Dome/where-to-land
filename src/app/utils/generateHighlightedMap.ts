@@ -1,4 +1,6 @@
-export async function generateHighlightedMap(randomizedLocation) {
+import {LocationInfo} from "@/app/types/Location";
+
+export async function generateHighlightedMap(randomizedLocation: string) {
     // Load the original map image
     const mapImage = new Image();
     mapImage.src = "/fortnite_map.png"; // Ensure the path matches your file structure
@@ -8,7 +10,7 @@ export async function generateHighlightedMap(randomizedLocation) {
 
     // Create a canvas and draw the grayscale map
     const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d")!;
     canvas.width = mapImage.width;
     canvas.height = mapImage.height;
 
@@ -50,8 +52,8 @@ export async function generateHighlightedMap(randomizedLocation) {
     return canvas.toDataURL();
 }
 // Example function to return polygon coordinates for each location
-function getLocationPolygon(location) {
-    const polygons = {
+function getLocationPolygon(location: string): { x: number; y: number }[] | null {
+    const polygons: LocationInfo = {
         "Twinkle Terrace": [
             { x: 278, y: 222 },
             { x: 287, y: 200 },

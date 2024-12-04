@@ -10,7 +10,7 @@ export default function Home() {
     const [crownWins, setCrownWins] = useState<Record<string, number>>({});
     const [locationToLand, setLocationToLand] = useState<string>("");
     const [map, setMap] = useState<string>(DefaultMap);
-    const [locations, setLocations] = useState([]);
+    const [locations, setLocations] = useState<string[]>([]);
 
     const randomizeLocation = () => {
         // let index
@@ -59,7 +59,7 @@ export default function Home() {
 
     const removeCrownWins = () => {
         if (!locationToLand) return;
-        if (crownWins[locationToLand] === 0) return;
+        if (!crownWins[locationToLand] || crownWins[locationToLand] === 0) return;
 
         setCrownWins((prevCrownWins) => ({
             ...prevCrownWins,
