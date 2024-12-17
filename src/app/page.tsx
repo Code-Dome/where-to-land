@@ -1,34 +1,35 @@
 "use client";
 
 import React, {useEffect, useRef, useState} from "react";
-import {DefaultMap, Locations} from "@/constants/locations";
-import {generateHighlightedMap} from "@/app/utils/generateHighlightedMap";
+import {Locations} from "@/constants/locations";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import posthog from 'posthog-js'
 
 export default function Home() {
+
+    posthog.init(process.env.POSTHOG_API_KEY as string,
+        {
+            api_host: 'https://us.i.posthog.com',
+            person_profiles: 'always'
+        }
+    )
+
     const [crownWins, setCrownWins] = useState<Record<string, number>>({});
     const [locationToLand, setLocationToLand] = useState<string>("");
-    const [map, setMap] = useState<string>(DefaultMap);
     const [locations, setLocations] = useState<string[]>([]);
-    const mapImageRef = useRef<HTMLImageElement>(null); // Add a ref for the map image
+    const mapImageRef = useRef<HTMLImageElement>(null);
 
     const randomizeLocation = () => {
-        // let index
-        //
-        // do {
-        //     index = Math.floor(Math.random() * Locations.length);
-        // } while (Locations[index] === locationToLand);
-
-
         const index = Math.floor(Math.random() * Locations.length);
         const location = Locations[index] as string;
-        setLocationToLand(location);
 
         if (locations.some(item => item == location)) {
             randomizeLocation()
             return
         }
+
+        setLocationToLand(location);
 
         setLocations((prevState) => {
             if (prevState.length >= 5) {
@@ -44,18 +45,9 @@ export default function Home() {
         }, 100); // Allow time for the new map to generate
     };
 
-    useEffect(() => {
-        if (!locationToLand) return
-
-       generateHighlightedMap(locationToLand).then((mapURL) => {
-           setMap(mapURL);
-        });
-
-    }, [locationToLand])
-
     const addCrownWins = () => {
         if (!locationToLand) return;
-        // Use current state to calculate the new state
+
         setCrownWins((prevCrownWins) => ({
             ...prevCrownWins,
             [locationToLand]: (prevCrownWins[locationToLand] ?? 0) + 1,
@@ -102,15 +94,6 @@ export default function Home() {
                         <AnimatePresence>
                             {locations.map((location, index) => {
                                 const opacity = 1 - index * 0.15;
-                                // const color = `rgba(253, 253, 150, ${opacity})`
-
-                                // const pastelColors = [
-                                //     `rgba(255, 182, 193, ${opacity})`,
-                                //     `rgba(255, 223, 186, ${opacity})`,
-                                //     `rgba(255, 253, 150, ${opacity})`,
-                                //     `rgba(186, 255, 201, ${opacity})`,
-                                //     `rgba(173, 216, 230, ${opacity})`
-                                // ];
 
                                 const pastelColors = [
                                     `rgba(173, 216, 230, ${opacity})`,
@@ -191,7 +174,7 @@ export default function Home() {
                     )}
                 </div>
                 <div className=" bg-gray-300 rounded p-1 mb-5">
-                    <Image src={map} alt={"fortnite_map"} width={1024} height={576} ref={mapImageRef} tabIndex={-1}/>
+                    <Image src={"./fortnite_map.png"} alt={"fortnite_map"} width={1024} height={576} ref={mapImageRef} tabIndex={-1}/>
                 </div>
             </main>
 
